@@ -59,7 +59,7 @@
   "Increase the nesting depth."
   (incf nesting-depth)
   (when (and *maximum-nesting-depth* (> nesting-depth *maximum-nesting-depth*))
-    (%syntax-error "Too many nested structures, current limit is ~A." *maximum-nesting-depth*)))
+    (%syntax-error "Слишком много вложенных структур, должно быть не больше ~A." *maximum-nesting-depth*)))
 
 (defsubst decr-nesting ()
   "Decrease the nesting depth."
@@ -84,13 +84,13 @@
 	 (error 'syntax-error
 		:stream *standard-input*
 		:position (file-position *standard-input*)
-		:format-control "Unexpected character ‘~A’."
+		:format-control "Неожиданный символ ‘~A’."
 		:format-arguments (list next-char)))
 	(t
 	 (error 'syntax-error
 		:stream *standard-input*
 		:position (file-position *standard-input*)
-		:format-control "Premature end of file."
+		:format-control "Файл рано закончился."
 		:format-arguments ()))))
 
 (defun %read (stream &optional junk-allowed)
@@ -187,7 +187,7 @@ Exceptional situations:
 	 (return))
 	(#\,
 	 (when emptyp
-	   (%syntax-error "Leading comma before object member."))
+	   (%syntax-error "Запятая перед частью объекта."))
 	 ;; Discard comma.
 	 (next-char*)
 	 ;; Check for trailing comma.
@@ -195,13 +195,13 @@ Exceptional situations:
 	   (return)))
 	(t
 	 (when (not emptyp)
-	   (%syntax-error "Missing comma after object member."))))
+	   (%syntax-error "Пропущена запятая после части объекта."))))
       ;; Read the key.
       (setf key-string (if (char= next-char #\")
 			   (parse-string)
 			 (progn
 			   (when (not *allow-literal-object-keys*)
-			     (%syntax-error "Object key must be a quoted string."))
+			     (%syntax-error "Ключ объекта должен быть строкой в кавычках."))
 			   (parse-literal t)))
 	    key (funcall *object-key-decoder* key-string))
       ;; Check if the key already exists.
@@ -218,12 +218,12 @@ Exceptional situations:
 		     (when (equal (car plist) key)
 		       (return plist))))))
       (when (and dup (not *allow-duplicate-object-keys*))
-        (%syntax-error "Duplicate object key ‘~A’." key-string))
+        (%syntax-error "Повтор ключа объекта ‘~A’." key-string))
       ;; Read the key/value separator.
       (when (null next-char)
 	(error 'end-of-file :stream *standard-input*))
       (unless (char= next-char #\:)
-        (%syntax-error "Expect a colon between object key and value."))
+        (%syntax-error "Пропущено двоеточие между ключом и значением объекта."))
       (next-char*)
       ;; Read the value.
       (setf value (parse-value))
@@ -276,7 +276,7 @@ Exceptional situations:
 	 (return))
 	(#\,
 	 (when emptyp
-	   (%syntax-error "Leading comma before array element."))
+	   (%syntax-error "Ведущая запятая перед элементом массива."))
 	 ;; Discard comma.
 	 (next-char*)
 	 ;; Check for trailing comma.
@@ -284,7 +284,7 @@ Exceptional situations:
 	   (return)))
 	(t
 	 (when (not emptyp)
-	   (%syntax-error "Missing comma after array element."))))
+	   (%syntax-error "Пропущена запятая после элемента массива."))))
       ;; Read the array element.
       (setf element (parse-value))
       (if (eq *array-as* :vector)
@@ -306,7 +306,7 @@ Exceptional situations:
   "Parse a JSON string."
   (with-output-to-string (buffer)
     (labels ((outc (char)
-	       "Append a character to the output buffer."
+	       "Добавить символ к выходному буферу."
 	       (write-char char buffer)))
       ;; Parse quoted string.
       (loop
@@ -341,7 +341,7 @@ Exceptional situations:
 		(when low
 		  (outc low))))
 	     (t
-	      (%syntax-error "Unknown escape sequence ‘\\~A’ in string." next-char))))
+	      (%syntax-error "В строке неизвестная escape-последовательность ‘\\~A’." next-char))))
 	  (t
 	   ;; Any other character.
 	   ;;
@@ -351,7 +351,7 @@ Exceptional situations:
 	   ;; reverse solidus (U+005C), and the control
 	   ;; characters U+0000 to U+001F.”
 	   (when (<= 0 (char-code next-char) #x1F)
-	     (%syntax-error "Raw control character ‘~A’ in string." next-char))
+	     (%syntax-error "Необработанный символ в строке: ‘~A’." next-char))
 	   (outc next-char)))))))
 
 (defun parse-unicode-escape ()
@@ -374,7 +374,7 @@ Exceptional situations:
 	  (let ((low (parse-hex)))
             (unless (and (<= #xD800 high #xDBFF)
 			 (<= #xDC00 low #xDFFF))
-	      (%syntax-error "Invalid UTF-16 surrogate pair U+~4,'0X and U+~4,'0X in string." high low))
+	      (%syntax-error "В строке некорректная суррогатная пара UTF-16 U+~4,'0X и U+~4,'0X." high low))
 	    #-cmucl
             (code-char (+ (ash (- high #xD800) 10)
                           (- low #xDC00)
@@ -411,7 +411,7 @@ Exceptional situations:
 		(next-char))
 	       ((char= next-char #\+)
 		(when strictp
-		  (%syntax-error "Number starts with an explicit plus sign."))
+		  (%syntax-error "Число начинается с плюса."))
 		(next-char)))
 	 ;; Integer part.
 	 (cond ((char= next-char #\0)
@@ -421,7 +421,7 @@ Exceptional situations:
 	       (t
 		(incf digits (read-digits))
 		(when (and strictp (zerop digits))
-		  (%syntax-error "Integer part of a number must not be empty."))))
+		  (%syntax-error "Целая часть числа не должна быть пустой."))))
 	 (when (null next-char)
 	   (return))
 	 ;; Optional fractional part.
@@ -441,13 +441,13 @@ Exceptional situations:
 		  (incf digits (read-digits)))
 		 (t
 		  (when (or strictp (zerop digits))
-		    (%syntax-error "Fractional part of a number must not be empty."))
+		    (%syntax-error "Дробная часть числа не должна быть пустой."))
 		  (outc #\0)))
 	   (when (null next-char)
 	     (return)))
 	 ;; Need at least one digit.
 	 (when (zerop digits)
-	   (%syntax-error "Significant of a number must consist of at least one digit."))
+	   (%syntax-error "Число должно состоять по крайней мере из одной цифры."))
 	 ;; Optional exponent part.
 	 (when (or (char= next-char #\E)
 		   (char= next-char #\e))
@@ -461,7 +461,7 @@ Exceptional situations:
 		 ((char= next-char #\+)
 		  (next-char)))
 	   (when (zerop (read-digits))
-	     (%syntax-error "Exponent of a number must not be empty.")))))
+	     (%syntax-error "Экспонента числа не должна быть пустой.")))))
     (prog1
 	(handler-case
 	    (let ((*read-default-float-format* 'double-float))
@@ -514,13 +514,13 @@ name (a string)."
 		     *false*)
 		    ((string= buffer "null"  :start1 start :end1 end)
 		     *null*)
-		    ((%syntax-error "Unknown literal name token ‘~A’." (buffer-string))))
+		    ((%syntax-error "Неизвестный литерал ‘~A’." (buffer-string))))
 	    ;; Accept any identifier name.
 	    (let ((name (buffer-string)))
 	      (if (or (string= name "true")
 		      (string= name "false")
 		      (string= name "null"))
-		  (%syntax-error "Literal name token ‘~A’ is not a valid identifier name." name)
+		  (%syntax-error "Литерал ‘~A’ не является допустимым идентификатором." name)
 		name)))
 	;; Skip trailing whitespace.
 	(when (and next-char (whitespace-char-p next-char))
