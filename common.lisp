@@ -125,7 +125,7 @@ for inline expansion by the compiler."
 (defsubst whitespace-char-p (char)
   "Return true if CHAR is a whitespace character.
 Argument CHAR has to be a character object."
-  (declare (type character char))
+  #-ecl (declare (type character char))
   (or (char= char #\Space)
       (char= char #\Tab)
       (char= char #\Linefeed)
@@ -243,7 +243,7 @@ Quite similar to the rehash size of hash tables.")
 		  (length ,buf))
 		(outc (char)
 		  "Append a character to the scratch buffer."
-		  (declare (type character char))
+		  #-ecl (declare (type character char))
 		  (vector-push-extend char ,buf ,incr)))
 	   (declare (inline current-buffer buffer-string displaced-buffer-string point-min point-max outc))
 	   (unwind-protect
