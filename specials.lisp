@@ -178,6 +178,8 @@ variable.")
 (defvar *pretty-printer* nil
   "Whether or not to enable the pretty printer for JSON output.")
 
+(defvar *parsed-file* nil)
+
 (defmacro with-default-values ((&rest ignored) &body body)
   "Establish a lexical environment with all special variables bound
 to their default values."
@@ -197,7 +199,8 @@ to their default values."
 	 (*allow-lax-numbers* nil)
 	 (*list-encoder* 'encode-object)
 	 (*nil-encoder* 'encode-list)
-	 (*encode-symbol-hook* nil))
+	 (*encode-symbol-hook* nil)
+	 (*parsed-file* nil))
      ,@body))
 
 ;;; specials.lisp ends here
