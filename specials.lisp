@@ -115,19 +115,6 @@ of ‘nil’ means to not limit the depth of nesting.  The default value
 is 1000.  This option only has an effect when reading JSON values.")
 (declaim (type (or (integer (0)) null) *maximum-nesting-depth*))
 
-(defvar *allow-unicode-whitespace* nil
-  "Whether or not to accept any Unicode whitespace character.
-If true, any character with the Unicode whitespace property is
-considered a whitespace character.  Otherwise, only the space,
-horizontal tab, line feed, and carriage return character are
-considered a whitespace character.  Default is false.")
-
-(defvar *allow-unicode-graphic* t
-  "Whether or not to escape Unicode graphic characters in JSON strings.
-If true, any Unicode graphic character is printed as is.  Otherwise,
-a graphic character is escaped like any other non-graphic character.
-Thus, the JSON output is plain US-ASCII.  Default is true.")
-
 (defvar *allow-trailing-comma* nil
   "Whether or not to accept a comma after the last object member
 or after the last array element.  Default is false.")
@@ -204,8 +191,6 @@ to their default values."
 	 (*false* :false)
 	 (*null* :null)
 	 (*maximum-nesting-depth* 1000)
-	 (*allow-unicode-whitespace* nil)
-	 (*allow-unicode-graphic* t)
 	 (*allow-trailing-comma* nil)
 	 (*allow-literal-object-keys* nil)
 	 (*allow-duplicate-object-keys* nil)

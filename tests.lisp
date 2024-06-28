@@ -263,24 +263,6 @@ Secondary value is true if the object member exists."
 	  (assert-equal "null" (serialize nil value) value)))
   ())
 
-(define-test unicode-whitespace
-  ;; Check ‘*allow-unicode-whitespace*’.
-  (let ((*allow-unicode-whitespace* t))
-    ;; No-break space around the array, em-space, en-space, figure
-    ;; space, and narrow no-break space inside the array.
-    (assert-equalp #("m" "n" 0 "'") (parse " [ \"m\" , \"n\" , 0 , \"'\" ] ")))
-  ;; Likewise inside a JSON string.
-  (let ((string " [ m , n , 0 , ' ] "))
-    (assert-equal string (parse (format nil "\"~A\"" string))))
-  ())
-
-(define-test unicode-graphic
-  ;; Check ‘*allow-unicode-graphic*’.
-  (let ((*allow-unicode-graphic* nil))
-    (assert-equal "\"\\u03BB\\u207B\\u00B9\"" (serialize nil "λ⁻¹"))
-    (irtt "λ⁻¹"))
-  ())
-
 (define-test trailing-comma
   ;; Check ‘*allow-trailing-comma*’.
   (let ((*allow-trailing-comma* t))

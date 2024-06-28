@@ -49,8 +49,6 @@
    #:*false*
    #:*null*
    #:*maximum-nesting-depth*
-   #:*allow-unicode-whitespace*
-   #:*allow-unicode-graphic*
    #:*allow-trailing-comma*
    #:*allow-literal-object-keys*
    #:*allow-duplicate-object-keys*

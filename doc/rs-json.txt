@@ -85,21 +85,6 @@ syntax-error
    or after the last array element.  Default is false.
 
                                                               [Special Variable]
-*allow-unicode-graphic*
-   Whether or not to escape Unicode graphic characters in JSON strings.
-   If true, any Unicode graphic character is printed as is.  Otherwise,
-   a graphic character is escaped like any other non-graphic character.
-   Thus, the JSON output is plain US-ASCII.  Default is true.
-
-                                                              [Special Variable]
-*allow-unicode-whitespace*
-   Whether or not to accept any Unicode whitespace character.
-   If true, any character with the Unicode whitespace property is
-   considered a whitespace character.  Otherwise, only the space,
-   horizontal tab, line feed, and carriage return character are
-   considered a whitespace character.  Default is false.
-
-                                                              [Special Variable]
 *array-as*
    The Lisp data structure used to represent a JSON array.
    Value is either ‘:vector’ or ‘:list’.  The default is to use

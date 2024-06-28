@@ -41,8 +41,7 @@
   :license "Modified BSD License"
   :version (:read-file-line "VERSION")
   :depends-on ("alexandria"
-	       "iterate"
-	       "cl-unicode")
+	       "iterate")
   :serial t
   :components ((:file "packages")
 	       (:file "specials")
