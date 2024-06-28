@@ -164,7 +164,9 @@ and the items of these compound structures are lined up nicely."
      (with-open-file (stream destination :direction :output
 					 :if-exists :supersede
 					 :if-does-not-exist :create
-					 :external-format (uiop:encoding-external-format :utf-8))
+					 :external-format
+					 #-ecl (uiop:encoding-external-format :utf-8)
+					 #+ecl :utf-8)
        (%print stream data pretty)))
     ((member t)
      (%print *standard-output* data pretty))
@@ -481,8 +483,6 @@ Mostly useful for binding ‘*nil-encoder*’."
 	((let ((code (char-code char)))
 	   (cond ((<= code #x001F)
 		  (format t "\\u~4,'0X" code))
-		 ((and *allow-unicode-graphic* (not (unicode-other-p code)))
-		  (write-char char))
 		 ((<= code #xFFFF)
 		  (format t "\\u~4,'0X" code))
 		 ((<= code #x10FFFF)

@@ -153,7 +153,9 @@ Exceptional situations:
      (with-input-from-string (stream source)
        (%read stream junk-allowed)))
     (pathname
-     (with-open-file (stream source :external-format (uiop:encoding-external-format :utf-8))
+     (with-open-file (stream source :external-format
+			     #-ecl (uiop:encoding-external-format :utf-8)
+			     #+ecl :utf-8)
        (%read stream junk-allowed)))
     ((member t)
      (%read *standard-input* junk-allowed))))
