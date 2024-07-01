@@ -103,7 +103,9 @@
 	(next-char nil)
 	(nesting-depth 0))
     ;; Read first character.
-    (next-char*)
+    (next-char* nil)
+    (unless next-char
+      (%syntax-error))
     ;; Parse the JSON value.
     (let ((data (parse-value)))
       ;; Check for end of file.
@@ -156,8 +158,8 @@ Exceptional situations:
      (with-open-file (stream source :external-format
 			     #-ecl (uiop:encoding-external-format :utf-8)
 			     #+ecl :utf-8)
-       (let ((*parsed-file* source))
-	 (%read stream junk-allowed))))
+       (setf *parsed-file* source)
+       (%read stream junk-allowed)))
     ((member t)
      (%read *standard-input* junk-allowed))))
 
@@ -181,12 +183,14 @@ Exceptional situations:
 		  (make-hash-table :test #'equal)))
 	(emptyp t) key-string key value dup)
     ;; Discard opening brace.
-    (next-char*)
+    (next-char* nil)
+    (unless next-char
+      (%syntax-error))
     (incr-nesting)
     ;; Parse object members.
     (loop
       (case next-char
-        (#\}
+	(#\}
 	 (return))
 	(#\,
 	 (when emptyp
